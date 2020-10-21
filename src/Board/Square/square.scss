@@ -1,0 +1,26 @@
+button {
+  background: rgb(202, 164, 114);
+  border: 1px solid black;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 3rem;
+  height: 3rem;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 3rem;
+}
+
+.black {
+  background-color: black;
+  height: 2.8rem;
+  border-radius: 50%;
+}
+
+.white {
+  background-color: white;
+  height: 2.8rem;
+  border-radius: 50%;
+}
