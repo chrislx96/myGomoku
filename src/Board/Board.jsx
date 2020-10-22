@@ -2,7 +2,9 @@ import React from "react";
 import Square from "./Square/Square.jsx";
 import style from "./board.scss";
 
-const BOARD_SIZE = 15;
+const BOARD_SIZE = 10;
+const MAX_REGRET_OPPORTUNITIES = 1;
+let regretOpportunitiesLeft = MAX_REGRET_OPPORTUNITIES;
 
 class Board extends React.Component {
   constructor(props) {
@@ -11,10 +13,11 @@ class Board extends React.Component {
       squares: Array(BOARD_SIZE * BOARD_SIZE).fill(null),
       whiteIsNext: false,
       winner: "No winner yet!",
+      lastMove: 0,
     };
   }
 
-  handleClick(i) {
+  handleSquareClick(i) {
     const { whiteIsNext, squares, winner } = this.state;
     const copiedSquares = squares.slice();
     const isGameOver = winner !== "No winner yet!" ? true : false;
@@ -25,10 +28,12 @@ class Board extends React.Component {
       this.setState({
         squares: copiedSquares,
         whiteIsNext: !whiteIsNext,
+        lastMove: i,
       });
     this.isWin(copiedSquares, i) &&
       !isGameOver &&
       this.setState({ winner: copiedSquares[i] });
+    regretOpportunitiesLeft = MAX_REGRET_OPPORTUNITIES;
   }
 
   renderSquare(i) {
@@ -38,7 +43,7 @@ class Board extends React.Component {
         key={i}
         color={squares[i]}
         onSquareClick={() => {
-          this.handleClick(i);
+          this.handleSquareClick(i);
         }}
       ></Square>
     );
@@ -108,6 +113,28 @@ class Board extends React.Component {
     return isWin;
   }
 
+  handleReset() {
+    this.setState({
+      squares: Array(BOARD_SIZE * BOARD_SIZE).fill(null),
+      whiteIsNext: false,
+      winner: "No winner yet!",
+    });
+  }
+
+  handleRegret() {
+    const { whiteIsNext, squares, lastMove, winner } = this.state;
+    const isGameOver = winner !== "No winner yet!" ? true : false;
+    const copiedSquares = squares.slice();
+    copiedSquares[lastMove] = null;
+    regretOpportunitiesLeft > 0 &&
+      !isGameOver &&
+      this.setState({
+        squares: copiedSquares,
+        whiteIsNext: !whiteIsNext,
+      });
+    regretOpportunitiesLeft--;
+  }
+
   render() {
     const { whiteIsNext, winner } = this.state;
     const nextPlayer = whiteIsNext ? "White" : "Black";
@@ -115,6 +142,18 @@ class Board extends React.Component {
       <main>
         <h2>{nextPlayer} player moves.</h2>
         <h2>Winner is : {winner}</h2>
+        <button
+          className={style.resetAndRegret}
+          onClick={() => this.handleReset()}
+        >
+          reset
+        </button>
+        <button
+          className={style.resetAndRegret}
+          onClick={() => this.handleRegret()}
+        >
+          regret
+        </button>
         {this.renderBoard(BOARD_SIZE)}
       </main>
     );

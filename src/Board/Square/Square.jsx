@@ -1,18 +1,12 @@
 import React from "react";
 import style from "./square.scss";
 
-class Square extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { onSquareClick, color } = this.props;
-    return (
-      <button onClick={() => onSquareClick()}>
-        <div className={style[color]}></div>
-      </button>
-    );
-  }
+function Square(props) {
+  const { onSquareClick, color } = props;
+  return (
+    <button className={style.square} onClick={() => onSquareClick()}>
+      <div className={style[color]}></div>
+    </button>
+  );
 }
 export default Square;
